@@ -41,5 +41,36 @@
       overlay = final: prev: {
         xmonad-sybrand = self.packages.${system}.xmonad-sybrand;
       };
+
+      # For testing in a vm
+      # sudo nixos-rebuild
+      nixosConfigurations.test-vm = let system = "x86_64-linux";
+      in nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ self.overlay ];
+          };
+        };
+        modules = [
+          self.nixosModule
+          {
+            users.users.test = {
+              isNormalUser = true;
+              initialPassword = "notWine";
+            };
+
+            services.xserver = {
+              enable = true;
+              sybrand-desktop-environment = {
+                enable = true;
+                impureConfig = true;
+              };
+              displayManager.defaultSession = "none+xmonad";
+            };
+          }
+        ];
+      };
     };
 }
