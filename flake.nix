@@ -31,6 +31,10 @@
         program = "${self.packages.${system}.xmonad-sybrand}/bin/xmonad";
       };
 
+      nixosModule = self.nixosModules.importAll;
+      # nixosModules = let files = attrNames (readDir ./modules) in ;
+      nixosModules.importAll = {...}: { imports = [ ./modules/xmonad-sybrand.nix ]; };
+
       overlay = final: prev: {
         xmonad-sybrand = self.packages.${system}.xmonad-sybrand;
       };
