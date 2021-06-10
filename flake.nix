@@ -30,5 +30,9 @@
         type = "app";
         program = "${self.packages.${system}.xmonad-sybrand}/bin/xmonad";
       };
+
+      overlay = final: prev: {
+        xmonad-sybrand = self.packages.${system}.xmonad-sybrand;
+      };
     };
 }
