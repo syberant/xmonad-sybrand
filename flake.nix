@@ -33,7 +33,10 @@
 
       nixosModule = self.nixosModules.importAll;
       # nixosModules = let files = attrNames (readDir ./modules) in ;
-      nixosModules.importAll = {...}: { imports = [ ./modules/xmonad-sybrand.nix ]; };
+      # nixpkgs.lib.recursiveUpdate
+      nixosModules.importAll = { ... }: {
+        imports = [ ./modules/xmonad-sybrand.nix ./modules/agnostic/common.nix ./modules/agnostic/systemInfo.nix ];
+      };
 
       overlay = final: prev: {
         xmonad-sybrand = self.packages.${system}.xmonad-sybrand;

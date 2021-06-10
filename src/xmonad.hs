@@ -140,7 +140,7 @@ myLayoutHook =
         where tall = Tall 1 (3/100) (1/2)
 
 myStartupHook = do
-    spawn "autostart_xmonad"
+    spawn "autostart_sybrand_de"
 
 myManageHook =
   namedScratchpadManageHook myScratchpads <> manageDocks
