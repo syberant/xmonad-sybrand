@@ -7,7 +7,6 @@ let
   cfg = config.services.xserver.windowManager.xmonad-sybrand;
 in {
   # TODO: add these dependencies again
-  # imports = [ ../common.nix ./autostart.nix ];
   # environment.systemPackages = [(pkgs.callPackage ../scripts/fzfmenu.nix { })];
 
   options = {
@@ -30,6 +29,8 @@ in {
       This could cause some problems due to naming collisions.
     ''] else
       [ ];
+
+    services.xserver.sybrand-desktop-environment.polybar.config."bar/example".modules-left = [ "ewmh" ];
 
     services.xserver.windowManager = {
       session = [{

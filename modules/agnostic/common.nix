@@ -5,6 +5,8 @@ let
   inherit (lib) mkEnableOption mkOption mkIf;
   cfg = config.services.xserver.sybrand-desktop-environment;
 in {
+  imports = [ ./polybar.nix ];
+
   options.services.xserver.sybrand-desktop-environment = {
     enable = mkEnableOption "Sybrand's desktop environment";
 
@@ -28,12 +30,7 @@ in {
 
       # TODO: clean this the fuck up.
       services.xserver.sybrand-desktop-environment.autostart = ''
-        ${pkgs.polybar}/bin/polybar -c ${
-          pkgs.callPackage ./dotfiles/polybar.nix {
-            config = config.systemInfo;
-            polybar = { modules-left = "ewmh"; };
-          }
-        } example &
+        ${pkgs.polybar}/bin/polybar -c ${cfg.polybar.dotfile} example &
         ${pkgs.sxhkd}/bin/sxhkd -c ${
           pkgs.callPackage ./dotfiles/sxhkdrc.nix { }
         } &
