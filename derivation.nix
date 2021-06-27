@@ -1,5 +1,5 @@
 # https://github.com/splintah/xmonad-splintah/blob/master/xmonad-splintah/xmonad-splintah.nix
-{ mkDerivation, base, containers, process, stdenv, X11, xmonad, xmonad-contrib
+{ lib, mkDerivation, base, containers, process, stdenv, X11, xmonad, xmonad-contrib
 , xmonad-extras }:
 
 mkDerivation {
@@ -10,5 +10,5 @@ mkDerivation {
   isExecutable = true;
   executableHaskellDepends =
     [ base containers process X11 xmonad xmonad-contrib xmonad-extras ];
-  license = stdenv.lib.licenses.agpl3;
+  license = lib.licenses.agpl3;
 }
