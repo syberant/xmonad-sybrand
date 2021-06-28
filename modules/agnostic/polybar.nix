@@ -10,6 +10,28 @@ with lib;
 let
   cfg = config.services.xserver.sybrand-desktop-environment.polybar;
 
+  polypomo = pkgs.stdenv.mkDerivation {
+    name = "polypomo";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "unode";
+      repo = "polypomo";
+      rev = "86df2b1a2d4af7b2d581f7feca7de924d3858a34";
+      sha256 = "0gy6w31vyw7ihblcyl2brk297mvyzc3mc8nnpikhqk3b50pb2xnx";
+    };
+
+    patchPhase = ''
+      sed 's|^#!/usr/bin/env python3|#!${pkgs.python3}/bin/python3|' -i polypomo
+      sed 's/^TOMATO.*/TOMATO = "🍅"/' -i polypomo
+      sed 's/^BREAK.*/BREAK = " "/' -i polypomo
+    '';
+
+    installPhase = ''
+      mkdir -p $out
+      mv polypomo $out/polypomo
+    '';
+  };
+
   # Quick hack, copied code from nixpkgs
   format = {
     type = with lib.types;
@@ -78,6 +100,7 @@ in {
       config = mkMerge [
         (fromTOML (readFile ./dotfiles/polybar.toml))
         (mkIf cfg.enablePomo {
+          "bar/example".modules-center = mkOrder 40 [ "polypomo" ];
           "module/polypomo" = {
             type = "custom/script";
             exec = "${polypomo}/polypomo --worktime 1500 --breaktime 300";
