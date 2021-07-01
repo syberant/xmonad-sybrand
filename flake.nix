@@ -69,6 +69,26 @@
               };
               displayManager.defaultSession = "none+xmonad";
             };
+
+            # Enable SSH access
+            services.openssh.enable = true;
+
+            # https://github.com/NixOS/nixpkgs/issues/59219
+            imports = [ "${nixpkgs}/nixos/modules/virtualisation/qemu-vm.nix" ];
+
+            # Speed up the VM a bit
+            virtualisation = {
+              # Significantly speeds up reading from virtual disk
+              # Set to 300 MB for now
+              # See: https://wiki.qemu.org/Documentation/9psetup#msize
+              msize = 300 * 1000 * 1000;
+
+              # 4 GB of memory
+              memorySize = 4000;
+
+              # Use multiple cores for a bit more power.
+              cores = 4;
+            };
           }
         ];
       };
