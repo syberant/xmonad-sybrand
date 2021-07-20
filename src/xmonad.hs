@@ -130,7 +130,7 @@ myScratchpads = [ NS
                 , NS
                     { NS.name = "astroid"
                     , NS.cmd = "astroid"
-                    , NS.query = className =? ".astroid-wrapped"
+                    , NS.query = className =? "Astroid"
                     , NS.hook = NS.customFloating $ W.RationalRect 0.1 0.1 0.8 0.80
                     }
                 ]
