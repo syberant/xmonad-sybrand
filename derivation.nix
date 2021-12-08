@@ -9,6 +9,6 @@ mkDerivation {
   isLibrary = false;
   isExecutable = true;
   executableHaskellDepends =
-    [ base containers process X11 xmonad xmonad-contrib xmonad-extras ];
+    stdenv.initialPath ++ [ base containers process X11 xmonad xmonad-contrib xmonad-extras ];
   license = lib.licenses.agpl3;
 }

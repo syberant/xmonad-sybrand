@@ -24,7 +24,7 @@ executable xmonad
                      , xmonad ^>=0.15
                      , xmonad-contrib ^>=0.16
                      -- , xmonad-extra ^>=0.16
-                     , X11 ^>=1.9
+                     , X11 ^>=1.10
                      , containers ^>=0.6
                      , process ^>=1.6
   hs-source-dirs:      src
