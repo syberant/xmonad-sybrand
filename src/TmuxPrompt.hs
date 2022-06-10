@@ -15,7 +15,7 @@ instance XPrompt Tmux where
 tmuxPrompt :: XPConfig -> X ()
 tmuxPrompt c = do
     sessions <- getSessions
-    mkXPrompt Tmux c (mkComplFunFromList' sessions) startTmux
+    mkXPrompt Tmux c (mkComplFunFromList' c sessions) startTmux
 
 getSessions :: MonadIO m => m [String]
 getSessions = io $ do

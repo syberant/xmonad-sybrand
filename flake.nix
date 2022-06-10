@@ -1,6 +1,10 @@
 # Stolen from:
 # https://github.com/splintah/xmonad-splintah/blob/master/flake.nix
 {
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+  };
+
   outputs = { self, nixpkgs, ... }:
     let
       system = "x86_64-linux";
