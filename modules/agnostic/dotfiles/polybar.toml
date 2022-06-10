@@ -34,7 +34,7 @@ nord8 = "#88C0D0"
 nord9 = "#81A1C1"
 urgent = "#BF616A"
 
-[bar/example]
+["bar/example"]
 width = "100%"
 height = 27
 #offset-x = 1%
@@ -71,9 +71,9 @@ tray-padding = 2
 cursor-click = "pointer"
 cursor-scroll = "ns-resize"
 
-[module/wlan]
+["module/wlan"]
 type = "internal/network"
-# interface = 
+# interface =
 interval = 3.0
 
 format-connected = "<ramp-signal> <label-connected>"
@@ -88,7 +88,7 @@ label-disconnected-foreground = "${colors.foreground-alt}"
 ramp-signal-0 = ""
 ramp-signal-foreground = "${colors.foreground-alt}"
 
-[module/xkeyboard]
+["module/xkeyboard"]
 type = "internal/xkeyboard"
 blacklist-0 = "num lock"
 
@@ -104,7 +104,7 @@ label-indicator-margin = 1
 label-indicator-background = "${colors.secondary}"
 label-indicator-underline = "${colors.secondary}"
 
-[module/filesystem]
+["module/filesystem"]
 type = "internal/fs"
 interval = 25
 
@@ -114,7 +114,7 @@ label-mounted = "%{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%"
 label-unmounted = "%mountpoint% not mounted"
 label-unmounted-foreground = "${colors.foreground-alt}"
 
-[module/i3]
+["module/i3"]
 type = "internal/i3"
 format = "<label-state> <label-mode>"
 index-sort = true
@@ -151,7 +151,7 @@ label-urgent-padding = "2"
 # Separator in between workspaces
 # label-separator = |
 
-[module/ewmh]
+["module/ewmh"]
 type = "internal/xworkspaces"
 enable-scroll = false
 
@@ -170,7 +170,7 @@ label-urgent-foreground = "${colors.urgent}"
 label-urgent-background = "${colors.foreground}"
 label-urgent-padding = 1
 
-[module/mpd]
+["module/mpd"]
 type = "internal/mpd"
 format-online = "<label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>"
 
@@ -183,7 +183,7 @@ icon-next = ""
 label-song-maxlen = 25
 label-song-ellipsis = true
 
-[module/xbacklight]
+["module/xbacklight"]
 type = "internal/xbacklight"
 
 format = "<label> <bar>"
@@ -200,7 +200,7 @@ bar-empty = "─"
 bar-empty-font = 2
 bar-empty-foreground = "${colors.foreground-alt}"
 
-[module/cpu]
+["module/cpu"]
 type = "internal/cpu"
 interval = 2
 format-prefix = " "
@@ -208,7 +208,7 @@ format-prefix-foreground = "${colors.foreground-alt}"
 format-underline = "#f90000"
 label = "%percentage:2%%"
 
-[module/memory]
+["module/memory"]
 type = "internal/memory"
 interval = 2
 format-prefix = " "
@@ -216,7 +216,7 @@ format-prefix-foreground = "${colors.foreground-alt}"
 format-underline = "#4bffdc"
 label = "%percentage_used%%"
 
-[module/date]
+["module/date"]
 type = "internal/date"
 interval = 5
 
@@ -232,7 +232,7 @@ format-underline = "#0a6cf5"
 
 label = "%date% %time%"
 
-[module/pulseaudio]
+["module/pulseaudio"]
 type = "internal/pulseaudio"
 
 format-volume = "<ramp-volume> <label-volume>"
@@ -264,7 +264,7 @@ bar-volume-empty = "─"
 bar-volume-empty-font = 2
 bar-volume-empty-foreground = "${colors.foreground-alt}"
 
-[module/battery]
+["module/battery"]
 type = "internal/battery"
 battery = "BAT0"
 adapter = "ADP1"
@@ -298,7 +298,7 @@ animation-discharging-4 = ""
 animation-discharging-foreground = "${colors.foreground-alt}"
 animation-discharging-framerate = 500
 
-[module/temperature]
+["module/temperature"]
 type = "internal/temperature"
 thermal-zone = 0
 warn-temperature = 60
@@ -317,7 +317,7 @@ ramp-1 = ""
 ramp-2 = ""
 ramp-foreground = "${colors.foreground-alt}"
 
-[settings]
+["settings"]
 screenchange-reload = true
 #compositing-background = xor
 #compositing-background = screen
@@ -325,6 +325,6 @@ screenchange-reload = true
 #compositing-border = over
 #pseudo-transparency = false
 
-[global/wm]
+["global/wm"]
 margin-top = 5
 margin-bottom = 5
