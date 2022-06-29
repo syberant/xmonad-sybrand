@@ -16,20 +16,6 @@
 
       defaultPackage.${system} = self.packages.${system}.xmonad-sybrand;
 
-      # Build script for XMonad, used for recompiling.
-      # See https://github.com/xmonad/xmonad/blob/master/CHANGES.md#enhancements-1
-      apps.${system}.build = {
-        type = "app";
-        program = let
-          build = pkgs.writeScriptBin "build" ''
-            #!${pkgs.stdenv.shell}
-            dist=$1
-            cp ${self.packages.${system}.xmonad-sybrand}/bin/xmonad "$dist"
-            chmod a+w "$dist"
-          '';
-        in "${build}/bin/build";
-      };
-
       defaultApp.${system} = {
         type = "app";
         program = "${self.packages.${system}.xmonad-sybrand}/bin/xmonad";
