@@ -7,7 +7,7 @@ import           System.IO.Unsafe            (unsafePerformIO)
 import           XMonad
 import           XMonad.Actions.CycleWS      (nextWS, prevWS)
 import           XMonad.Actions.DwmPromote
-import           XMonad.Hooks.EwmhDesktops   (ewmh)
+import           XMonad.Hooks.EwmhDesktops   (ewmh, ewmhFullscreen)
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.StatusBar
 import           XMonad.Prompt               as Prompt
@@ -24,7 +24,6 @@ import           XMonad.Util.NamedScratchpad (NamedScratchpad (NS),
 
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
 import           MouseFollowsFocus           (mouseFollowsFocus)
-import           MyFullscreen                (myFullscreenSupport)
 import           OpenFilePrompt              (openFilePrompt)
 import           TmuxPrompt                  (tmuxPrompt)
 
@@ -158,7 +157,7 @@ myManageHook =
   namedScratchpadManageHook myScratchpads <> manageDocks
 
 main = do
-    xmonad $ myFullscreenSupport $ ewmh $ docks def {
+    xmonad $ ewmhFullscreen $ ewmh $ docks def {
         borderWidth        = 2,
         terminal           = myTerminal,
         normalBorderColor  = nord3,
