@@ -112,7 +112,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
 
   ---- xmonad
   -- Restart xmonad
-  , ((modm .|. shiftMask, xK_q), spawn "notify-send 'Recompiling xmonad...'; xmonad --recompile; xmonad --restart")
+  , ((modm .|. shiftMask, xK_q), spawn "notify-send 'Recompiling xmonad...'; xmonad --recompile && xmonad --restart && notify-send 'Compilation succeeded' || notify-send -u critical 'Compilation failed'")
   ]
   <>
   [ ((modm .|. m, k), windows $ f i)
@@ -145,8 +145,6 @@ myLayoutHook =
         where tall = Tall 1 (3/100) (1/2)
 
 myStartupHook = do
-    spawn "notify-send 'Started XMonad'"
-
     -- When reloading kill the previous status bar(s)
     killAllStatusBars
 
