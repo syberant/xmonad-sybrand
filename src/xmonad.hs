@@ -9,6 +9,7 @@ import           XMonad.Hooks.EwmhDesktops   (ewmh)
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Prompt               as Prompt
 import           XMonad.Prompt.FuzzyMatch    (fuzzyMatch, fuzzySort)
+import           XMonad.Prompt.Pass
 import           XMonad.Prompt.Window        (WindowPrompt (Bring, Goto),
                                               allWindows, windowPrompt)
 import           XMonad.StackSet             (focusDown, focusUp)
@@ -76,6 +77,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   ---- Prompts
   , ((modm, xK_t), tmuxPrompt myPromptConfig)
   , ((modm, xK_o), openFilePrompt myPromptConfig)
+  , ((modm, xK_p), passPrompt myPromptConfig)
 
   ---- Window managing
   -- Kill focused window
