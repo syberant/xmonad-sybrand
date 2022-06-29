@@ -28,21 +28,17 @@ in {
       services.xserver.windowManager.xmonad-sybrand.enable =
         mkIf cfg.xmonad true;
 
-      # TODO: clean this the fuck up.
+      environment.variables.XMONAD_SYBRAND_STATUSBAR =
+        "${pkgs.polybar}/bin/polybar -c ${cfg.polybar.dotfile} example";
       services.xserver.sybrand-desktop-environment.autostart = ''
-        ${pkgs.polybar}/bin/polybar -c ${cfg.polybar.dotfile} example &
         ${pkgs.sxhkd}/bin/sxhkd -c ${
           pkgs.callPackage ./dotfiles/sxhkdrc.nix { }
         } &
         ${pkgs.dunst}/bin/dunst -config ${./dotfiles/dunst-config} &
-        ~/.fehbg || feh --bg-fill ${./background.jpg}
+        ~/.fehbg || ${pkgs.feh} --bg-fill ${./background.jpg}
       '';
 
-      environment.systemPackages = with pkgs; [
-        (writeScriptBin "autostart_sybrand_de" cfg.autostart)
-        feh
-        st
-      ];
+      environment.systemPackages = with pkgs; [ st ];
 
     }
     (mkIf cfg.impureConfig {

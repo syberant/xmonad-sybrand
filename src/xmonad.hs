@@ -1,23 +1,26 @@
 -- Much was shamelessly copied from https://github.com/splintah/xmonad-splintah/blob/master/xmonad-splintah/src/Main.hs
 
 import qualified Data.Map                    as Map
+import           System.Environment          (lookupEnv)
+import           System.IO.Unsafe            (unsafePerformIO)
 
 import           XMonad
 import           XMonad.Actions.CycleWS      (nextWS, prevWS)
 import           XMonad.Actions.DwmPromote
 import           XMonad.Hooks.EwmhDesktops   (ewmh)
 import           XMonad.Hooks.ManageDocks
+import           XMonad.Hooks.StatusBar
 import           XMonad.Prompt               as Prompt
 import           XMonad.Prompt.FuzzyMatch    (fuzzyMatch, fuzzySort)
 import           XMonad.Prompt.Pass
 import           XMonad.Prompt.Window        (WindowPrompt (Bring, Goto),
                                               allWindows, windowPrompt)
-import           XMonad.StackSet             (focusDown, focusUp)
 import qualified XMonad.StackSet             as W
+import           XMonad.StackSet             (focusDown, focusUp)
+import qualified XMonad.Util.NamedScratchpad as NS
 import           XMonad.Util.NamedScratchpad (NamedScratchpad (NS),
                                               namedScratchpadAction,
                                               namedScratchpadManageHook)
-import qualified XMonad.Util.NamedScratchpad as NS
 
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
 import           MouseFollowsFocus           (mouseFollowsFocus)
@@ -142,7 +145,16 @@ myLayoutHook =
         where tall = Tall 1 (3/100) (1/2)
 
 myStartupHook = do
-    spawn "autostart_sybrand_de"
+    spawn "notify-send 'Started XMonad'"
+
+    -- When reloading kill the previous status bar(s)
+    killAllStatusBars
+
+    -- Launch the status bar(s) again
+    let statusbarCommand = unsafePerformIO $ do lookupEnv "XMONAD_SYBRAND_STATUSBAR"
+    case statusbarCommand of
+        Nothing -> spawn "notify-send 'warning: XMONAD_SYBRAND_STATUSBAR does not exist, status bar not loaded'"
+        Just cmd -> spawnStatusBar cmd
 
 myManageHook =
   namedScratchpadManageHook myScratchpads <> manageDocks

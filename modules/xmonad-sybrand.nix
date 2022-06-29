@@ -38,6 +38,7 @@ in {
         start = ''
           systemd-cat -t xmonad ${cfg.package}/bin/xmonad &
           waitPID=$!
+          bash ${pkgs.writeScript "autostart_de.sh" config.services.xserver.sybrand-desktop-environment.autostart}
         '';
       }];
     };
