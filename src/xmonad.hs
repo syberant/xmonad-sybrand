@@ -115,7 +115,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
 
   ---- xmonad
   -- Restart xmonad
-  , ((modm .|. shiftMask, xK_q), spawn "notify-send 'Recompiling xmonad...'; xmonad --recompile && xmonad --restart && notify-send 'Compilation succeeded' || notify-send -u critical 'Compilation failed'")
+  , ((modm .|. shiftMask, xK_q), spawn "notify-send 'Recompiling xmonad...'; xmonad --recompile && xmonad --restart && notify-send 'Compilation succeeded' || (notify-send -u critical 'Compilation failed'; st -e less ~/.xmonad/xmonad.errors)")
   ]
   <>
   [ ((modm .|. m, k), windows $ f i)
