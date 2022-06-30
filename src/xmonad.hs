@@ -1,31 +1,35 @@
 -- Much was shamelessly copied from https://github.com/splintah/xmonad-splintah/blob/master/xmonad-splintah/src/Main.hs
 
-import qualified Data.Map                    as Map
-import           System.Environment          (lookupEnv)
-import           System.IO.Unsafe            (unsafePerformIO)
+import qualified Data.Map                     as Map
+import           System.Environment           (lookupEnv)
+import           System.IO.Unsafe             (unsafePerformIO)
 
 import           XMonad
-import           XMonad.Actions.CycleWS      (nextWS, prevWS)
+import           XMonad.Actions.CycleWS       (Direction1D (Next, Prev),
+                                               ignoringWSs, moveTo)
 import           XMonad.Actions.DwmPromote
-import           XMonad.Hooks.EwmhDesktops   (ewmh, ewmhFullscreen)
+import           XMonad.Hooks.EwmhDesktops    (addEwmhWorkspaceSort, ewmh,
+                                               ewmhFullscreen)
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.StatusBar
-import           XMonad.Prompt               as Prompt
-import           XMonad.Prompt.FuzzyMatch    (fuzzyMatch, fuzzySort)
+import           XMonad.Prompt                as Prompt
+import           XMonad.Prompt.FuzzyMatch     (fuzzyMatch, fuzzySort)
 import           XMonad.Prompt.Pass
-import           XMonad.Prompt.Window        (WindowPrompt (Bring, Goto),
-                                              allWindows, windowPrompt)
-import qualified XMonad.StackSet             as W
-import           XMonad.StackSet             (focusDown, focusUp)
-import qualified XMonad.Util.NamedScratchpad as NS
-import           XMonad.Util.NamedScratchpad (NamedScratchpad (NS),
-                                              namedScratchpadAction,
-                                              namedScratchpadManageHook)
+import           XMonad.Prompt.Window         (WindowPrompt (Bring, Goto),
+                                               allWindows, windowPrompt)
+import qualified XMonad.StackSet              as W
+import           XMonad.StackSet              (focusDown, focusUp)
+import qualified XMonad.Util.NamedScratchpad  as NS
+import           XMonad.Util.NamedScratchpad  (NamedScratchpad (NS),
+                                               namedScratchpadAction,
+                                               namedScratchpadManageHook,
+                                               scratchpadWorkspaceTag)
+import           XMonad.Util.WorkspaceCompare (filterOutWs)
 
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
-import           MouseFollowsFocus           (mouseFollowsFocus)
-import           OpenFilePrompt              (openFilePrompt)
-import           TmuxPrompt                  (tmuxPrompt)
+import           MouseFollowsFocus            (mouseFollowsFocus)
+import           OpenFilePrompt               (openFilePrompt)
+import           TmuxPrompt                   (tmuxPrompt)
 
 myTerminal = "st"
 
@@ -101,11 +105,11 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
 
   ---- Move between workspaces
   -- Previous workspace
-  , ((modm .|. controlMask, xK_j), prevWS)
-  , ((controlMask, xK_Left), prevWS)
+  , ((modm .|. controlMask, xK_j), moveSkippingNSP Prev)
+  , ((controlMask, xK_Left), moveSkippingNSP Prev)
   -- Next workspace
-  , ((modm .|. controlMask, xK_k), nextWS)
-  , ((controlMask, xK_Right), nextWS)
+  , ((modm .|. controlMask, xK_k), moveSkippingNSP Next)
+  , ((controlMask, xK_Right), moveSkippingNSP Next)
     -- Go to window
   , ((modm, xK_g), windowPrompt myPromptConfig Goto allWindows)
 
@@ -118,6 +122,9 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   | (i, k) <- zip (XMonad.workspaces conf) [xK_1..xK_9]
   , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
   ]
+  where
+    -- Move to next workspace in direction `d` while skipping over the NSP scratchpad workspace
+    moveSkippingNSP d = moveTo d $ ignoringWSs [scratchpadWorkspaceTag]
 
 myScratchpads = [ NS
                     { NS.name = "scratchpad"
@@ -156,8 +163,10 @@ myStartupHook = do
 myManageHook =
   namedScratchpadManageHook myScratchpads <> manageDocks
 
+myWorkspaceFilter = filterOutWs [scratchpadWorkspaceTag]
+
 main = do
-    xmonad $ ewmhFullscreen $ ewmh $ docks def {
+    xmonad . addEwmhWorkspaceSort (pure myWorkspaceFilter) . ewmhFullscreen . ewmh . docks $ def {
         borderWidth        = 2,
         terminal           = myTerminal,
         normalBorderColor  = nord3,
