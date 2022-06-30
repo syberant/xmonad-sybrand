@@ -29,9 +29,13 @@ import           XMonad.Util.WorkspaceCompare (filterOutWs)
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
 import           MouseFollowsFocus            (mouseFollowsFocus)
 import           OpenFilePrompt               (openFilePrompt)
+import           Terminal                     (Terminal (..),
+                                               baseTerminal, executeCommand,
+                                               executeCommandWithWindowClass)
 import           TmuxPrompt                   (tmuxPrompt)
 
-myTerminal = "st"
+myTerminal :: Terminal
+myTerminal = Alacritty
 
 myFont size = "xft:DejaVu Sans Mono:size=" <> show size <> ":antialias=true:autohint=true"
 
@@ -71,7 +75,7 @@ myPromptConfig = def
 myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   ---- Applications
   -- Launch terminal
-  ((modm, xK_Return), spawn myTerminal)
+  ((modm, xK_Return), spawn $ baseTerminal myTerminal)
   -- Launch application launcher
   , ((modm, xK_space), spawn "dmenu_run")
 
@@ -115,7 +119,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
 
   ---- xmonad
   -- Restart xmonad
-  , ((modm .|. shiftMask, xK_q), spawn "notify-send 'Recompiling xmonad...'; xmonad --recompile && xmonad --restart && notify-send 'Compilation succeeded' || (notify-send -u critical 'Compilation failed'; st -e less ~/.xmonad/xmonad.errors)")
+  , ((modm .|. shiftMask, xK_q), spawn $ "notify-send 'Recompiling xmonad...'; xmonad --recompile && xmonad --restart && notify-send 'Compilation succeeded' || (notify-send -u critical 'Compilation failed'; " ++ executeCommand myTerminal "less ~/.xmonad/xmonad.errors" ++ ")")
   ]
   <>
   [ ((modm .|. m, k), windows $ f i)
@@ -128,13 +132,13 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
 
 myScratchpads = [ NS
                     { NS.name = "scratchpad"
-                    , NS.cmd = "st -n scratchpad -e tmux new-session -A -s scratchpad"
+                    , NS.cmd = executeCommandWithWindowClass myTerminal "scratchpad" "tmux new-session -A -s scratchpad"
                     , NS.query = resource =? "scratchpad"
                     , NS.hook = NS.customFloating $ W.RationalRect 0.1 0.1 0.8 0.8
                     }
                 , NS
                     { NS.name = "todo"
-                    , NS.cmd = "st -n todo -e zet"
+                    , NS.cmd = executeCommandWithWindowClass myTerminal "todo" "zet"
                     , NS.query = resource =? "todo"
                     , NS.hook = NS.customFloating $ W.RationalRect 0.2 0.1 0.6 0.8
                     }
@@ -168,7 +172,7 @@ myWorkspaceFilter = filterOutWs [scratchpadWorkspaceTag]
 main = do
     xmonad . addEwmhWorkspaceSort (pure myWorkspaceFilter) . ewmhFullscreen . ewmh . docks $ def {
         borderWidth        = 2,
-        terminal           = myTerminal,
+        terminal           = baseTerminal myTerminal,
         normalBorderColor  = nord3,
         focusedBorderColor = nord7,
 

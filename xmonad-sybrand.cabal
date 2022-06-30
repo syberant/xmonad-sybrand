@@ -18,7 +18,7 @@ author:              Sybrand Aarnoutse
 
 executable xmonad
   main-is:             xmonad.hs
-  other-modules:       TmuxPrompt, OpenFilePrompt, MouseFollowsFocus
+  other-modules:       TmuxPrompt, OpenFilePrompt, MouseFollowsFocus, Terminal
   -- other-extensions:
   build-depends:       base
                      , xmonad >=0.17
