@@ -25,5 +25,5 @@ pkgs.writeText "sxhkd-config" ''
 
   # Take screenshot
   {super + ,}Print
-    ${pkgs.scrot}/bin/scrot '%Y-%m-%d_%H:%M_$wx$h.png' {,-s} -e 'mkdir -p ~/Pictures/Screenshots; mv $f ~/Pictures/Screenshots'
+    ${pkgs.scrot}/bin/scrot '%Y-%m-%d_%H:%M:%S.png' {,-s} -e 'mkdir -p ~/Pictures/Screenshots; mv $f ~/Pictures/Screenshots'
 ''
