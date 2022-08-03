@@ -1,38 +1,43 @@
 -- Much was shamelessly copied from https://github.com/splintah/xmonad-splintah/blob/master/xmonad-splintah/src/Main.hs
 
-import qualified Data.Map                     as Map
-import           System.Environment           (lookupEnv)
-import           System.IO.Unsafe             (unsafePerformIO)
+import qualified Data.Map                         as Map
+import           System.Environment               (lookupEnv)
+import           System.IO.Unsafe                 (unsafePerformIO)
 
 import           XMonad
-import           XMonad.Actions.CycleWS       (Direction1D (Next, Prev),
-                                               ignoringWSs, moveTo)
+import           XMonad.Actions.CycleWS           (Direction1D (Next, Prev),
+                                                   ignoringWSs, moveTo)
 import           XMonad.Actions.DwmPromote
-import           XMonad.Hooks.EwmhDesktops    (addEwmhWorkspaceSort, ewmh,
-                                               ewmhFullscreen)
+import           XMonad.Actions.GridSelect
+import           XMonad.Hooks.EwmhDesktops        (addEwmhWorkspaceSort, ewmh,
+                                                   ewmhFullscreen)
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Hooks.StatusBar
-import           XMonad.Prompt                as Prompt
-import           XMonad.Prompt.FuzzyMatch     (fuzzyMatch, fuzzySort)
+import           XMonad.Layout.Decoration
+import           XMonad.Layout.NoFrillsDecoration (noFrillsDeco)
+-- import           XMonad.Layout.Spacing            (spacingRaw, Border)
+import           XMonad.Layout.Spacing
+import           XMonad.Prompt                    as Prompt
+import           XMonad.Prompt.FuzzyMatch         (fuzzyMatch, fuzzySort)
 import           XMonad.Prompt.Pass
-import           XMonad.Prompt.Window         (WindowPrompt (Bring, Goto),
-                                               allWindows, windowPrompt)
-import qualified XMonad.StackSet              as W
-import           XMonad.StackSet              (focusDown, focusUp)
-import qualified XMonad.Util.NamedScratchpad  as NS
-import           XMonad.Util.NamedScratchpad  (NamedScratchpad (NS),
-                                               namedScratchpadAction,
-                                               namedScratchpadManageHook,
-                                               scratchpadWorkspaceTag)
-import           XMonad.Util.WorkspaceCompare (filterOutWs)
+import           XMonad.Prompt.Window             (WindowPrompt (Bring, Goto),
+                                                   allWindows, windowPrompt)
+import qualified XMonad.StackSet                  as W
+import           XMonad.StackSet                  (focusDown, focusUp)
+import qualified XMonad.Util.NamedScratchpad      as NS
+import           XMonad.Util.NamedScratchpad      (NamedScratchpad (NS),
+                                                   namedScratchpadAction,
+                                                   namedScratchpadManageHook,
+                                                   scratchpadWorkspaceTag)
+import           XMonad.Util.WorkspaceCompare     (filterOutWs)
 
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
-import           MouseFollowsFocus            (mouseFollowsFocus)
-import           OpenFilePrompt               (openFilePrompt)
-import           Terminal                     (Terminal (..),
-                                               baseTerminal, executeCommand,
-                                               executeCommandWithWindowClass)
-import           TmuxPrompt                   (tmuxPrompt)
+import           MouseFollowsFocus                (mouseFollowsFocus)
+import           OpenFilePrompt                   (openFilePrompt)
+import           Terminal                         (Terminal (..), baseTerminal,
+                                                   executeCommand,
+                                                   executeCommandWithWindowClass)
+import           TmuxPrompt                       (tmuxPrompt)
 
 myTerminal :: Terminal
 myTerminal = Alacritty
@@ -88,6 +93,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   , ((modm, xK_t), tmuxPrompt myPromptConfig)
   , ((modm, xK_o), openFilePrompt myPromptConfig)
   , ((modm, xK_p), passPrompt myPromptConfig)
+  , ((modm, xK_g), goToSelected def)
 
   ---- Window managing
   -- Kill focused window
@@ -150,9 +156,25 @@ myScratchpads = [ NS
                     }
                 ]
 
+topBarTheme = def
+    { decoHeight          = 5
+    , inactiveBorderColor = inactive
+    , inactiveColor       = inactive
+    , inactiveTextColor   = inactive
+    , activeBorderColor   = active
+    , activeColor         = active
+    , activeTextColor     = active
+    }
+    where
+        inactive = nord3
+        active = nord7
+addTopBar = noFrillsDeco shrinkText topBarTheme
+
 myLayoutHook =
-    avoidStruts $ tall ||| Full
-        where tall = Tall 1 (3/100) (1/2)
+    avoidStruts $ (addTopBar $ addGaps $ tall) ||| Full
+        where
+            tall = Tall 1 (3/100) (1/2)
+            addGaps = spacingRaw True (Border 0 0 0 0) False (Border 0 3 3 3) True
 
 myStartupHook = do
     -- When reloading kill the previous status bar(s)
@@ -171,7 +193,7 @@ myWorkspaceFilter = filterOutWs [scratchpadWorkspaceTag]
 
 main = do
     xmonad . addEwmhWorkspaceSort (pure myWorkspaceFilter) . ewmhFullscreen . ewmh . docks $ def {
-        borderWidth        = 2,
+        borderWidth        = 0,
         terminal           = baseTerminal myTerminal,
         normalBorderColor  = nord3,
         focusedBorderColor = nord7,
