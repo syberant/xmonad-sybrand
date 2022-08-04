@@ -34,6 +34,7 @@ import           XMonad.Util.WorkspaceCompare     (filterOutWs)
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
 import           MouseFollowsFocus                (mouseFollowsFocus)
 import           OpenFilePrompt                   (openFilePrompt)
+import           SideDecorations
 import           Terminal                         (Terminal (..), baseTerminal,
                                                    executeCommand,
                                                    executeCommandWithWindowClass)
@@ -158,6 +159,7 @@ myScratchpads = [ NS
 
 topBarTheme = def
     { decoHeight          = 5
+    , decoWidth           = 8
     , inactiveBorderColor = inactive
     , inactiveColor       = inactive
     , inactiveTextColor   = inactive
@@ -168,13 +170,14 @@ topBarTheme = def
     where
         inactive = nord3
         active = nord7
-addTopBar = noFrillsDeco shrinkText topBarTheme
+
+myDecorate = decoration shrinkText topBarTheme (SideDecoration L)
 
 myLayoutHook =
-    avoidStruts $ (addTopBar $ addGaps $ tall) ||| Full
+    avoidStruts $ (myDecorate $ addGaps $ tall) ||| Full
         where
             tall = Tall 1 (3/100) (1/2)
-            addGaps = spacingRaw True (Border 0 0 0 0) False (Border 0 3 3 3) True
+            addGaps = spacingRaw True (Border 0 0 0 0) False (Border 3 3 3 3) True
 
 myStartupHook = do
     -- When reloading kill the previous status bar(s)
