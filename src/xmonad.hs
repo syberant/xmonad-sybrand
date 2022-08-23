@@ -152,7 +152,7 @@ myScratchpads = [ NS
                 , NS
                     { NS.name = "mail"
                     , NS.cmd = "thunderbird"
-                    , NS.query = className =? "Thunderbird"
+                    , NS.query = resource =? "Mail"
                     , NS.hook = NS.customFloating $ W.RationalRect 0.1 0.1 0.8 0.80
                     }
                 ]
