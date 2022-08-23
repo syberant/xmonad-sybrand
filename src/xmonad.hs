@@ -88,7 +88,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   ---- Scratchpads
   , ((modm, xK_d), namedScratchpadAction myScratchpads "scratchpad")
   , ((modm, xK_i), namedScratchpadAction myScratchpads "todo")
-  , ((modm, xK_e), namedScratchpadAction myScratchpads "astroid")
+  , ((modm, xK_e), namedScratchpadAction myScratchpads "mail")
 
   ---- Prompts
   , ((modm, xK_t), tmuxPrompt myPromptConfig)
@@ -150,9 +150,9 @@ myScratchpads = [ NS
                     , NS.hook = NS.customFloating $ W.RationalRect 0.2 0.1 0.6 0.8
                     }
                 , NS
-                    { NS.name = "astroid"
-                    , NS.cmd = "astroid"
-                    , NS.query = className =? "Astroid"
+                    { NS.name = "mail"
+                    , NS.cmd = "thunderbird"
+                    , NS.query = className =? "Thunderbird"
                     , NS.hook = NS.customFloating $ W.RationalRect 0.1 0.1 0.8 0.80
                     }
                 ]
