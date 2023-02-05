@@ -8,54 +8,37 @@
 --
 -- TODO:
 --   Remove `Project` type, it does not serve any purpose
---   General cleanup
 --
 -- Links:
 -- https://hackage.haskell.org/package/xmonad-contrib-0.17.1/docs/XMonad-Actions-DynamicWorkspaces.html
 -- https://hackage.haskell.org/package/xmonad-contrib-0.17.1/docs/XMonad-Util-ExtensibleState.html
 -- https://www.reddit.com/r/xmonad/comments/fgyzc/xmonadactionsdynamicworkspaces_where_have_you/
 
-module Projects (hiddenWorkspaces, switchProject, addProject, removeCurrentProject, withNthFilteredWorkspace) where
+module Projects (switchProject, removeCurrentProject) where
 
 import           Control.Monad                    (mapM_)
-import qualified Data.List                        as List
 import qualified Data.Map.Strict                  as Map
-import           XMonad                           hiding (workspaces)
+import           Hide                             (hideWorkspace, showWorkspace)
+import           XMonad
 import           XMonad.Actions.DynamicWorkspaces (addHiddenWorkspaceAt,
                                                    removeWorkspaceByTag)
 import           XMonad.Prompt                    (XPConfig,
                                                    mkComplFunFromList',
                                                    mkXPrompt)
 import           XMonad.Prompt.Workspace          (Wor (Wor))
-import           XMonad.StackSet                  (greedyView, tag, workspaces)
+import           XMonad.StackSet                  (greedyView)
 import qualified XMonad.Util.ExtensibleState      as XS
-import           XMonad.Util.WorkspaceCompare     (getSortByIndex)
 
 
-data State = State
+data ProjectState = State
     { activeProjectName :: String
     , projects          :: Map.Map String Project
     } deriving (Read, Show)
-instance ExtensionClass State where
+instance ExtensionClass ProjectState where
     initialValue = State defaultProject $ Map.singleton defaultProject (Project defaultProject 3)
     extensionType = PersistentExtension
 
 activeProject (State active projs) = projs Map.! active
-
-hiddenWorkspaces :: X [String]
-hiddenWorkspaces = do
-    (State active projects) <- XS.get
-    return $ ["NSP"] ++ (concat $ map projectTags $ Map.elems $ Map.delete active projects)
-
--- Modified from: https://hackage.haskell.org/package/xmonad-contrib-0.17.1/docs/src/XMonad.Actions.DynamicWorkspaces.html#withNthWorkspace
-withNthFilteredWorkspace :: (String -> WindowSet -> WindowSet) -> Int -> X ()
-withNthFilteredWorkspace job wnum = do
-    hidden <- hiddenWorkspaces
-    s <- getSortByIndex
-    ws <- gets (map tag . s . workspaces . windowset)
-    case drop wnum (ws List.\\ hidden) of
-        (w:_) -> windows $ job w
-        []    -> return ()
 
 data Project = Project
     { name   :: String
@@ -64,6 +47,12 @@ data Project = Project
 
 defaultProject = ""
 projectTags (Project name n) = map (\x -> name ++ show x) $ map (6+) [1..n]
+
+refreshHideList :: X()
+refreshHideList = do
+    st@(State act projs) <- XS.get
+    mapM_ hideWorkspace (concat $ map projectTags $ Map.elems projs)
+    mapM_ showWorkspace (projectTags $ activeProject st)
 
 switchProject :: XPConfig -> X ()
 switchProject conf = do
@@ -76,6 +65,7 @@ switchProject conf = do
                 if Map.member name projs then return () else addProject name
                 (State _ projs) <- XS.get
                 XS.put (State name projs)
+                refreshHideList
                 windows (greedyView $ name ++ "8")
 
 
@@ -92,6 +82,7 @@ removeCurrentProject :: X ()
 removeCurrentProject = do
     (State active _) <- XS.get
     if active == defaultProject then return () else removeProject active
+    refreshHideList
 
 removeProject :: String -> X ()
 removeProject name = do

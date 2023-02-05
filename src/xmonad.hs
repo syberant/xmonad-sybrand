@@ -8,9 +8,7 @@ import           XMonad
 import           XMonad.Actions.CycleWS           (Direction1D (Next, Prev),
                                                    ignoringWSs, moveTo)
 import           XMonad.Actions.DwmPromote
-import           XMonad.Actions.DynamicWorkspaces (addHiddenWorkspace,
-                                                   removeWorkspace,
-                                                   selectWorkspace)
+import           XMonad.Actions.DynamicWorkspaces (addWorkspace, removeWorkspace)
 import           XMonad.Actions.GridSelect
 import           XMonad.Hooks.EwmhDesktops        (addEwmhWorkspaceSort, ewmh,
                                                    ewmhFullscreen)
@@ -35,6 +33,8 @@ import           XMonad.Util.NamedScratchpad      (NamedScratchpad (NS),
 import           XMonad.Util.WorkspaceCompare     (filterOutWs)
 
 -- Own modules (well, partially, MouseFollowsFocus is blatantly stolen from splintah, I guess I just want to say they're nonstandard)
+import           Hide                             (hiddenWorkspaces,
+                                                   withNthFilteredWorkspace)
 import           MouseFollowsFocus                (mouseFollowsFocus)
 import           OpenFilePrompt                   (openFilePrompt)
 import qualified Projects                         as P
@@ -131,6 +131,8 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   ---- Project management
   , ((modm, xK_a), P.switchProject def)
   , ((modm, xK_r), P.removeCurrentProject)
+  , ((modm .|. shiftMask, xK_a), addWorkspace def)
+  , ((modm .|. shiftMask, xK_r), removeWorkspace)
 
   ---- xmonad
   -- Restart xmonad
@@ -139,13 +141,13 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
   <>
   -- mod-[1..9]       %! Switch to workspace N
   -- mod-shift-[1..9] %! Move window to workspace N
-  [ ((modm .|. m, k), P.withNthFilteredWorkspace f i)
+  [ ((modm .|. m, k), withNthFilteredWorkspace f i)
   | (i, k) <- zip [0..] [xK_1..xK_9]
   , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
   ]
   where
     -- Move to next workspace in direction `d` while skipping over the NSP scratchpad workspace
-    moveSkipping d = P.hiddenWorkspaces >>= moveTo d . ignoringWSs
+    moveSkipping d = hiddenWorkspaces >>= moveTo d . ignoringWSs
 
 myScratchpads = [ NS
                     { NS.name = "scratchpad"
@@ -203,7 +205,7 @@ myManageHook =
   namedScratchpadManageHook myScratchpads <> manageDocks
 
 main = do
-    xmonad . addEwmhWorkspaceSort (filterOutWs <$> P.hiddenWorkspaces) . ewmhFullscreen . ewmh . docks $ def {
+    xmonad . addEwmhWorkspaceSort (filterOutWs <$> hiddenWorkspaces) . ewmhFullscreen . ewmh . docks $ def {
         borderWidth        = 0,
         terminal           = baseTerminal myTerminal,
         normalBorderColor  = nord3,
