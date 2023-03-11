@@ -157,8 +157,8 @@ myScratchpads = [ NS
                     }
                 , NS
                     { NS.name = "todo"
-                    , NS.cmd = executeCommandWithWindowClass myTerminal "todo" "zet"
-                    , NS.query = resource =? "todo"
+                    , NS.cmd = "emacs -T notes"
+                    , NS.query = title =? "notes"
                     , NS.hook = NS.customFloating $ W.RationalRect 0.2 0.1 0.6 0.8
                     }
                 , NS
