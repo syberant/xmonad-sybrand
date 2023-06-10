@@ -22,7 +22,7 @@ let
 
     patchPhase = ''
       sed 's|^#!/usr/bin/env python3|#!${pkgs.python3}/bin/python3|' -i polypomo
-      sed 's/^TOMATO.*/TOMATO = "🍅"/' -i polypomo
+      sed 's/^TOMATO.*/TOMATO = "Pomo"/' -i polypomo
       sed 's/^BREAK.*/BREAK = " "/' -i polypomo
     '';
 
