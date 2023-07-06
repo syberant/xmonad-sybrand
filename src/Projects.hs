@@ -46,7 +46,7 @@ data Project = Project
     } deriving (Read, Show)
 
 defaultProject = ""
-projectTags (Project name n) = map (\x -> name ++ show x) $ map (6+) [1..n]
+projectTags (Project name n) = map (\x -> name ++ show x) $ map (4+) [1..n]
 
 refreshHideList :: X()
 refreshHideList = do
@@ -66,7 +66,7 @@ switchProject conf = do
                 (State _ projs) <- XS.get
                 XS.put (State name projs)
                 refreshHideList
-                windows (greedyView $ name ++ "8")
+                windows (greedyView $ name ++ "7")
 
 
 addProject :: String -> X ()
@@ -74,7 +74,7 @@ addProject name = do
         XS.modify changeState
         mapM_ appendWorkspace $ projectTags proj
     where
-        proj = Project name 3
+        proj = Project name 5
         changeState (State act projs) = State act $ Map.insert name proj projs
         appendWorkspace = addHiddenWorkspaceAt (\x xs -> x:xs)
 
