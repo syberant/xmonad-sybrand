@@ -2,7 +2,7 @@
 --
 -- Plan:
 --   Always have a default '' project as fallback
---   Get every project their own workspaces 7-9
+--   Get every project their own workspaces 5-9
 --   Use an XMonad Prompt and picker to switch between projects and create new ones
 --   Delete a project if no open windows?
 --
@@ -35,7 +35,7 @@ data ProjectState = State
     , projects          :: Map.Map String Project
     } deriving (Read, Show)
 instance ExtensionClass ProjectState where
-    initialValue = State defaultProject $ Map.singleton defaultProject (Project defaultProject 3)
+    initialValue = State defaultProject $ Map.singleton defaultProject (Project defaultProject 5)
     extensionType = PersistentExtension
 
 activeProject (State active projs) = projs Map.! active
