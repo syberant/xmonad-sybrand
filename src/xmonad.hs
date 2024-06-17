@@ -91,7 +91,7 @@ myKeys conf@XConfig {XMonad.modMask = modm} = Map.fromList $ [
 
   ---- Scratchpads
   , ((modm, xK_d), namedScratchpadAction myScratchpads "scratchpad")
-  , ((modm, xK_i), namedScratchpadAction myScratchpads "todo")
+  , ((modm, xK_i), namedScratchpadAction myScratchpads "roam" >> namedScratchpadAction myScratchpads "todo")
   , ((modm, xK_e), namedScratchpadAction myScratchpads "mail")
 
   ---- Prompts
@@ -159,7 +159,13 @@ myScratchpads = [ NS
                     { NS.name = "todo"
                     , NS.cmd = "emacs -T notes"
                     , NS.query = title =? "notes"
-                    , NS.hook = NS.customFloating $ W.RationalRect 0.2 0.1 0.6 0.8
+                    , NS.hook = NS.customFloating $ W.RationalRect 0.5 0.03 0.5 1
+                    }
+                , NS
+                    { NS.name = "roam"
+                    , NS.cmd = "env WEBKIT_DISABLE_COMPOSITING_MODE=1 surf -N localhost:35901"
+                    , NS.query = resource =? "surf" -- TODO: hack `surf` so I can set WM_CLASS via CLI
+                    , NS.hook = NS.customFloating $ W.RationalRect 0 0.03 0.5 1
                     }
                 , NS
                     { NS.name = "mail"
